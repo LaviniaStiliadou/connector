@@ -1,0 +1,1368 @@
+{
+    "info": {
+        "description": "This is the API Specification of the Quantum Circuit Generator(https://quantil.readthedocs.io/en/latest/user-guide/quantum-circuit-generator/).",
+        "title": "Quantum Circuit Generator API",
+        "version": "0.1"
+    },
+    "license": {
+        "name": "Apache v2 License"
+    },
+    "paths": {
+        "/encoding/basis": {
+        },
+        "/encoding/angle": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AngleEncodingResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "ETag": {
+                                "$ref": "#/components/headers/ETAG"
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AngleEncodingRequest"
+                            },
+                            "example": {
+                                "vector": [
+                                    1.25,
+                                    3.14
+                                ],
+                                "rotationaxis": "x"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "encodings"
+                ]
+            }
+        },
+        "/encoding/amplitude": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AmplitudeEncodingResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "ETag": {
+                                "$ref": "#/components/headers/ETAG"
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AmplitudeEncodingRequest"
+                            },
+                            "example": {
+                                "vector": [
+                                    1.25,
+                                    3.14
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "encodings"
+                ]
+            }
+        },
+        "/encoding/schmidt": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SchmidtDecompositionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SchmidtDecompositionRequest"
+                            },
+                            "example": {
+                                "vector": [
+                                    1.25,
+                                    3.14,
+                                    0,
+                                    1
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "encodings"
+                ]
+            }
+        },
+        "/algorithms/hhl": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HHLResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/HHLAlgorithmRequest"
+                            },
+                            "example": {
+                                "matrix": [
+                                    [
+                                        1.5,
+                                        0.5
+                                    ],
+                                    [
+                                        0.5,
+                                        1.5
+                                    ]
+                                ],
+                                "vector": [
+                                    0,
+                                    1
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/qaoa": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QAOAResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QAOAAlgorithmRequest"
+                            },
+                            "example": {
+                                "pauli_op_string": "0.5 * ((I^Z^Z) + (Z^I^Z) + (Z^Z^I))",
+                                "reps": 2,
+                                "gammas": [
+                                    1,
+                                    1.2
+                                ],
+                                "betas": [
+                                    0.4,
+                                    0.7
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/qft": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QFTResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QFTAlgorithmRequest"
+                            },
+                            "example": {
+                                "n_qubits": 4,
+                                "inverse": false,
+                                "barriers": true
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/qpe": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QPEResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QPEAlgorithmRequest"
+                            },
+                            "example": {
+                                "n_eval_qubits": 3,
+                                "unitary": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[1];\np(pi/2) q[0];\n"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/vqe": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VQEResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VQEAlgorithmRequest"
+                            },
+                            "example": {
+                                "parameters": [
+                                    0.1,
+                                    0.2,
+                                    0.3,
+                                    0.4,
+                                    0.5,
+                                    0.6,
+                                    0.7,
+                                    0.8
+                                ],
+                                "observable": "Z^Y"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/grover": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GroverResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GroverAlgorithmRequest"
+                            },
+                            "example": {
+                                "oracle": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[3];\nccx q[0],q[1],q[2];\n",
+                                "initial_state": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[3];\nx q[0];\ny q[1];\nz q[2];\n",
+                                "iterations": 2,
+                                "reflection_qubits": [
+                                    0,
+                                    1
+                                ],
+                                "barriers": true
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/tspqaoa": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CircuitResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "description": "Currently, only 3x3 and 4x4 matrices supported.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TSPQAOAAlgorithmRequest"
+                            },
+                            "example": {
+                                "adj_matrix": [
+                                    [
+                                        0,
+                                        1,
+                                        1,
+                                        0
+                                    ],
+                                    [
+                                        1,
+                                        0,
+                                        1,
+                                        1
+                                    ],
+                                    [
+                                        1,
+                                        1,
+                                        0,
+                                        1
+                                    ],
+                                    [
+                                        0,
+                                        1,
+                                        1,
+                                        0
+                                    ]
+                                ],
+                                "p": 2,
+                                "betas": [
+                                    1,
+                                    2
+                                ],
+                                "gammas": [
+                                    1,
+                                    3
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/maxcutqaoa": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CircuitResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "ETag": {
+                                "$ref": "#/components/headers/ETAG"
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaxCutQAOAAlgorithmRequest"
+                            },
+                            "example": {
+                                "adj_matrix": [
+                                    [
+                                        0,
+                                        1,
+                                        1,
+                                        0
+                                    ],
+                                    [
+                                        1,
+                                        0,
+                                        1,
+                                        1
+                                    ],
+                                    [
+                                        1,
+                                        1,
+                                        0,
+                                        1
+                                    ],
+                                    [
+                                        0,
+                                        1,
+                                        1,
+                                        0
+                                    ]
+                                ],
+                                "betas": [
+                                    1
+                                ],
+                                "gammas": [
+                                    1
+                                ],
+                                "p": 1,
+                                "parameterized": false
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/knapsackqaoa": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CircuitResponse"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "ETag": {
+                                "$ref": "#/components/headers/ETAG"
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/KnapsackQAOAAlgorithmRequest"
+                            },
+                            "example": {
+                                "items": [
+                                    {
+                                        "value": 5,
+                                        "weight": 2
+                                    },
+                                    {
+                                        "value": 2,
+                                        "weight": 1
+                                    },
+                                    {
+                                        "value": 3,
+                                        "weight": 2
+                                    }
+                                ],
+                                "max_weights": 20,
+                                "p": 1,
+                                "betas": [
+                                    1
+                                ],
+                                "gammas": [
+                                    1
+                                ]
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        },
+        "/algorithms/drawCircuit": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CircuitDrawResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "description": "QASM 2.0 String.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CircuitDrawRequest"
+                            },
+                            "example": {
+                                "circuit": "123"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "algorithms"
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "encodings",
+            "description": "get quantum circuit encodings"
+        },
+        {
+            "name": "algorithms",
+            "description": "get quantum circuit algorithms"
+        }
+    ],
+    "openapi": "3.0.2",
+    "components": {
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Error name"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "description": "Errors"
+                    }
+                }
+            },
+            "PaginationMetadata": {
+                "type": "object",
+                "properties": {
+                    "total": {
+                        "type": "integer"
+                    },
+                    "total_pages": {
+                        "type": "integer"
+                    },
+                    "first_page": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "page": {
+                        "type": "integer"
+                    },
+                    "previous_page": {
+                        "type": "integer"
+                    },
+                    "next_page": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "BasisEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "integral_bits": {
+                        "type": "integer"
+                    },
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "fractional_bits": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "BasisEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/BasisEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AngleEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "rotationaxis": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AngleEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/AngleEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AmplitudeEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "AmplitudeEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/AmplitudeEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SchmidtDecompositionRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "SchmidtDecompositionResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/SchmidtDecompositionRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "HHLAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "HHLResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/HHLAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "mixer": {
+                        "type": "string"
+                    },
+                    "reps": {
+                        "type": "integer"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "pauli_op_string": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "pauli_op_string"
+                ]
+            },
+            "QAOAResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QAOAAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QFTAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "barriers": {
+                        "type": "boolean"
+                    },
+                    "inverse": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "QFTResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QFTAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QPEAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "unitary": {
+                        "type": "string"
+                    },
+                    "n_eval_qubits": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "QPEResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QPEAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "VQEAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "observable": {
+                        "type": "string"
+                    },
+                    "ansatz": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "VQEResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/VQEAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GroverAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "barriers": {
+                        "type": "boolean"
+                    },
+                    "oracle": {
+                        "type": "string"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "reflection_qubits": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "iterations": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "GroverResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/GroverAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TSPQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "p": {
+                        "type": "integer"
+                    },
+                    "adj_matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "CircuitResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MaxCutQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "p": {
+                        "type": "integer"
+                    },
+                    "parameterized": {
+                        "type": "boolean"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "epsilon": {
+                        "type": "number"
+                    },
+                    "adj_matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "adj_matrix"
+                ]
+            },
+            "KnapsackQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "p": {
+                        "type": "integer"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "max_weights": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "CircuitDrawRequest": {
+                "type": "object",
+                "properties": {
+                    "circuit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CircuitDrawResponse": {
+                "type": "object",
+                "properties": {
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "UNPROCESSABLE_ENTITY": {
+                "description": "Unprocessable Entity",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "DEFAULT_ERROR": {
+                "description": "Default error response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "headers": {
+            "ETAG": {
+                "description": "Tag for the returned entry",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
