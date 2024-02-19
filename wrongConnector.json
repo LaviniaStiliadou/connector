@@ -1,0 +1,706 @@
+{
+    "info": {
+        "description": "This is the API Specification of the Quantum Circuit Generator(https://quantil.readthedocs.io/en/latest/user-guide/quantum-circuit-generator/).",
+        "title": "Quantum Circuit Generator API",
+        "version": "0.1"
+    },
+    "license": {
+        "name": "Apache v2 License"
+    },
+    "tags": [
+        {
+            "name": "encodings",
+            "description": "get quantum circuit encodings"
+        },
+        {
+            "name": "algorithms",
+            "description": "get quantum circuit algorithms"
+        }
+    ],
+    "openapi": "3.0.2",
+    "components": {
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Error name"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "description": "Errors"
+                    }
+                }
+            },
+            "PaginationMetadata": {
+                "type": "object",
+                "properties": {
+                    "total": {
+                        "type": "integer"
+                    },
+                    "total_pages": {
+                        "type": "integer"
+                    },
+                    "first_page": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "page": {
+                        "type": "integer"
+                    },
+                    "previous_page": {
+                        "type": "integer"
+                    },
+                    "next_page": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "BasisEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "integral_bits": {
+                        "type": "integer"
+                    },
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "fractional_bits": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "BasisEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/BasisEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AngleEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "rotationaxis": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AngleEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/AngleEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AmplitudeEncodingRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "AmplitudeEncodingResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/AmplitudeEncodingRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SchmidtDecompositionRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "SchmidtDecompositionResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/SchmidtDecompositionRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "HHLAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "vector": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "HHLResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/HHLAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "mixer": {
+                        "type": "string"
+                    },
+                    "reps": {
+                        "type": "integer"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "pauli_op_string": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "pauli_op_string"
+                ]
+            },
+            "QAOAResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QAOAAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QFTAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "barriers": {
+                        "type": "boolean"
+                    },
+                    "inverse": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "QFTResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QFTAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "QPEAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "unitary": {
+                        "type": "string"
+                    },
+                    "n_eval_qubits": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "QPEResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/QPEAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "VQEAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "observable": {
+                        "type": "string"
+                    },
+                    "ansatz": {
+                        "type": "string"
+                    },
+                    "parameters": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "VQEResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/VQEAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GroverAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "barriers": {
+                        "type": "boolean"
+                    },
+                    "oracle": {
+                        "type": "string"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "reflection_qubits": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "iterations": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "GroverResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "$ref": "#/components/schemas/GroverAlgorithmRequest"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TSPQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "p": {
+                        "type": "integer"
+                    },
+                    "adj_matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "CircuitResponse": {
+                "type": "object",
+                "properties": {
+                    "n_qubits": {
+                        "type": "integer"
+                    },
+                    "circuit": {
+                        "type": "string"
+                    },
+                    "depth": {
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    },
+                    "circuit_language": {
+                        "type": "string"
+                    },
+                    "circuit_type": {
+                        "type": "string"
+                    },
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MaxCutQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "p": {
+                        "type": "integer"
+                    },
+                    "parameterized": {
+                        "type": "boolean"
+                    },
+                    "initial_state": {
+                        "type": "string"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "epsilon": {
+                        "type": "number"
+                    },
+                    "adj_matrix": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "adj_matrix"
+                ]
+            },
+            "KnapsackQAOAAlgorithmRequest": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "p": {
+                        "type": "integer"
+                    },
+                    "betas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "gammas": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "max_weights": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "CircuitDrawRequest": {
+                "type": "object",
+                "properties": {
+                    "circuit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CircuitDrawResponse": {
+                "type": "object",
+                "properties": {
+                    "visualization": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "UNPROCESSABLE_ENTITY": {
+                "description": "Unprocessable Entity",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "DEFAULT_ERROR": {
+                "description": "Default error response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "headers": {
+            "ETAG": {
+                "description": "Tag for the returned entry",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
