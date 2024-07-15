@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:quantme="https://github.com/UST-QuAntiL/QuantME-Quantum4BPMN" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_1" isExecutable="true">
+    <bpmn2:scriptTask id="Activity_0lpheyh" name="Warm Start" scriptFormat="python" quantme:requirements="qiskit==0.46.1&#10;qiskit_qasm3_import~=0.5.0&#10;qiskit-aer==0.14.1&#10;qiskit-terra==0.46.1&#10;requests&#10;numpy">
+      <bpmn2:script>import numpy as np
+from qiskit import Aer, execute
+from qiskit.circuit.library import EfficientSU2
+from qiskit.quantum_info import Statevector
+from qiskit.quantum_info import SparsePauliOp
+from qiskit.quantum_info import random_clifford
+from qiskit import QuantumCircuit
+from qiskit.algorithms import VQE
+from qiskit.qasm3 import dumps, loads
+
+import json 
+
+seed = 1
+np.random.seed(seed)
+operator_matrix = np.matrix([[3. + 0.j, 2. + 0.j, 0. + 0.j, 0. - 2.5j], [2. + 0.j, -3. + 0.j, 0. + 2.5j, 0. + 0.j],
+                                [0. + 0.j, 0. - 2.5j, -3. + 0.j, 0. + 0.j], [0. + 2.5j, 0. + 0.j, 0. + 0.j, 3. + 0.j]])
+pauli_operator = SparsePauliOp.from_operator(operator_matrix)
+problem_size = int(np.log2(len(operator_matrix)))
+ansatz = EfficientSU2(num_qubits=problem_size, reps=2)
+
+def estimate_fidelity_from_shadow(unitaries, measured_bitstrings, target_state):
+
+    measured_bitstrings = [np.matrix(b) for b in measured_bitstrings]
+    unitaries = [np.matrix(u) for u in unitaries]
+    target_state = np.matrix(target_state)
+
+    n_shots = len(measured_bitstrings)
+    n_qubits = np.log2(target_state.shape[1])
+    observable = target_state.T @ np.conj(target_state)
+
+    fidelity = 0
+    factor = 2 ** n_qubits + 1
+    for i in range(n_shots):
+        product = np.conj(measured_bitstrings[i]) @ (unitaries[i] @ observable @ unitaries[i].H) @ measured_bitstrings[i].T
+        cur_fid = factor * product - 1
+        fidelity += cur_fid
+
+    fidelity = fidelity / n_shots
+    fidelity = np.abs(np.sum(fidelity))
+    return fidelity
+
+def power_method(matrix, num_iterations=10):
+    bk = np.random.rand(matrix.shape[1]) + 1.j * np.random.rand(matrix.shape[1])
+    bk = np.matrix(bk).T
+    for i in range(num_iterations):
+        bk1 = np.dot(matrix, bk)
+        bk = bk1 / np.linalg.norm(bk1)
+    return bk
+
+def inverse_power_method(matrix, shift=0, num_iterations=10):
+    inv_matrix = np.linalg.inv(matrix - shift * np.identity(matrix.shape[0]))
+    return power_method(inv_matrix, num_iterations)
+
+def get_gershgorins(matrix, draw=False):
+    centers, radii = [], []
+    for i in range(matrix.shape[0]):
+        centers.append(matrix[i, i])
+        radii.append(np.sum([np.abs(matrix[i, j]) if j is not i else 0 for j in range(matrix.shape[0])]))
+    return centers, radii
+
+def get_gershgorin_extrema(matrix):
+    centers, radii = get_gershgorins(matrix, draw=False)
+    min_bound = min(np.subtract(np.real(centers), radii))
+    max_bound = max(np.add(np.real(centers), radii))
+    return min_bound, max_bound
+
+def execute_circuits(params_str, meas_circuits2, backend1):
+    params = np.array(json.loads(params_str))
+    meas_circuits = parse_qasm_to_circuits(meas_circuits2)
+    backend = Aer.get_backend(backend1)
+    final_meas_circuits = [circuit.assign_parameters(params) for circuit in meas_circuits]
+    job = execute(final_meas_circuits, backend=backend, shots=1, seed_transpiler=seed, seed_simulator=seed)
+    result = job.result()
+    counts = [result.get_counts(i) for i, _ in enumerate(final_meas_circuits)]
+    counts_str = json.dumps(counts)
+    return counts_str
+
+def calculate_fidelity(unitaries_json, counts_str, shift, approx_iterations):
+    approx_eigenstate = inverse_power_method(operator_matrix, shift=shift, num_iterations=approx_iterations).T.tolist()[0]
+    reconstructed_unitaries = []
+    counts = json.loads(counts_str)
+    unitaries = json.loads(unitaries_json)
+
+    # Iterate through each unitary matrix string
+    for unitary_str in unitaries:
+        # Remove unnecessary whitespace and newline characters
+        unitary_str = unitary_str.replace('\n', '').replace(' ', '')
+
+        # Convert the string representation back to a numpy array
+        unitary_matrix = np.array(eval(unitary_str))  # Use eval to evaluate the string as a Python expression
+        reconstructed_unitaries.append(unitary_matrix)
+
+    bs = [Statevector.from_label(list(cnt.keys())[0]) for cnt in counts]
+    fidelity = -estimate_fidelity_from_shadow(reconstructed_unitaries, bs, approx_eigenstate)
+    print("ACAE fidelity:", fidelity)
+    return fidelity
+
+def update_parameters(param_plus_str, param_minus_str, fidelity, plus_fidelity):
+
+    if plus_fidelity &lt; fidelity:
+        print("plus parameters")
+        return param_plus_str
+    else:
+      print("old params")
+      return param_minus_str
+
+def reset_fidelities(params_str):
+    params = np.array(json.loads(params_str))
+    plus_fidelity = np.zeros_like(params)
+    minus_fidelity = np.zeros_like(params)
+
+    plus_fidelity_str = json.dumps(plus_fidelity.tolist())
+    minus_fidelity_str = json.dumps(minus_fidelity.tolist())
+
+    return plus_fidelity_str, minus_fidelity_str
+
+def initialize_positive_parameters(parameters_str, j, rhobeg):
+    parameters = np.array(json.loads(parameters_str))
+    new_parameters = np.copy(parameters)
+    new_parameters[j] += rhobeg
+    new_parameters_str = json.dumps(new_parameters.tolist())
+    return new_parameters_str
+
+def initialize_negative_parameters(parameters_str, j, rhobeg):
+    parameters = np.array(json.loads(parameters_str))
+    new_parameters = np.copy(parameters)
+    new_parameters[j] -= rhobeg
+    new_parameters_str = json.dumps(new_parameters.tolist())
+    return new_parameters_str
+
+# Function to prepare measurement circuits
+def prepare_meas_circuits(circuit: QuantumCircuit, n_shadows, seed):
+    circuits = []
+    unitaries = []
+    unitaries_str = []
+
+    for _ in range(n_shadows):
+        clifford = random_clifford(num_qubits=circuit.num_qubits, seed=seed)
+        cir = circuit.compose(clifford.to_circuit())
+        cir.measure_all()
+        circuits.append(cir)
+        unitaries.append(clifford.to_matrix())
+
+    circuits_string = '##########\n'.join([dumps(circuit) for circuit in circuits])
+
+    # Generate QASM strings with parameters assigned
+
+    # Iterate through each unitary matrix numpy array
+    for unitary_matrix in unitaries:
+        # Convert numpy array to string representation
+        unitary_str = np.array2string(unitary_matrix, separator=',', precision=8, suppress_small=True)
+        unitaries_str.append(unitary_str)
+
+    unitaries_json = json.dumps(unitaries_str)
+    return circuits_string, unitaries_json
+
+# Function to parse QASM strings back to circuits
+def parse_qasm_to_circuits(circuits_string):
+    qasm_circuits = circuits_string.split('##########\n')
+    print(qasm_circuits)
+    
+    parsed_circuits = []
+    i = 0
+    for qasm in qasm_circuits:
+      qasm = qasm.strip()
+      parsed_circuit = loads(qasm)
+      parsed_circuits.append(parsed_circuit)
+
+    return parsed_circuits
+
+def main():
+
+    # SPLIT: Classical
+    max_iter = 20
+    tol = np.pi / (2 ** 6)
+    rhobeg = np.pi / 4
+    initial_param_values = np.random.uniform(-np.pi, np.pi, size=len(ansatz.parameters))
+    params = initial_param_values
+    params_length = len(params)
+    backend = "statevector_simulator"
+    initial_param_values_str = json.dumps(initial_param_values.tolist())
+    params_str = json.dumps(initial_param_values.tolist())
+    print("Serialized Parameters String:", initial_param_values_str)
+    current_iteration = 0
+    j = 0
+    shift = get_gershgorin_extrema(operator_matrix)[0]
+
+
+    # SPLIT: Circuit Generation
+    n_shadows = 100
+    meas_circuits2, unitaries = prepare_meas_circuits(ansatz, n_shadows, seed)
+
+
+    while current_iteration &lt; max_iter and rhobeg &gt;= tol:
+
+        # SPLIT: Classical
+        plus_fidelity, minus_fidelity = reset_fidelities(params_str)
+
+        while j &lt; params_length:
+
+            # SPLIT: Circuit Execution
+            counts_str = execute_circuits(params_str, meas_circuits2, backend)
+            param_plus_str = initialize_positive_parameters(params_str, j,  rhobeg)
+            plus_counts_str = execute_circuits(param_plus_str, meas_circuits2, backend)
+            param_minus_str = initialize_negative_parameters(params_str, j,  rhobeg)
+            minus_counts_str = execute_circuits(param_minus_str, meas_circuits2, backend)
+
+            # SPLIT: Result Evaluation
+            approx_iterations = 3
+            fidelity = calculate_fidelity(unitaries, counts_str, shift, approx_iterations)
+            print("fidelity", fidelity)
+            plus_fidelity = calculate_fidelity(unitaries, plus_counts_str, shift, approx_iterations)
+            print("plus_fildelity", plus_fidelity)
+            print(plus_fidelity)
+            minus_fidelity = calculate_fidelity(unitaries, minus_counts_str, shift, approx_iterations)
+            print("minus_fidelity", minus_fidelity)
+
+            # SPLIT: Parameter Optimization
+            new_params_str = update_parameters(param_plus_str, param_minus_str, fidelity, plus_fidelity)
+            params_str = new_params_str
+            j = j + 1
+
+        # SPLIT: Classical
+        rhobeg = rhobeg * 0.5
+        current_iteration = current_iteration + 1
+        j = 0
+
+if __name__ == "__main__":
+    main()</bpmn2:script>
+    </bpmn2:scriptTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="Activity_0j8w71x_di" bpmnElement="Activity_0lpheyh">
+        <dc:Bounds x="510" y="218" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
